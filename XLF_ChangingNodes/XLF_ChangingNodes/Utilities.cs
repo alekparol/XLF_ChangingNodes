@@ -10,50 +10,98 @@ using System.Xml;
 namespace XLF_ChangingNodes
 {
     public class Utilities
-    {
-
-        static public XmlNodeList GetNodesContaining(XmlDocument xlfDocument, string nodesName, string searchedText)
+    {   
+        /*
+         * 
+         */
+        static public XmlNodeList GetNodesByTagName(XmlDocument xmlDocument, string tagName)
         {
+            XmlNodeList foundNodes = null;
 
-            XmlNodeList searchedNodes = null;
-
-            string nodesXPath = "//" + nodesName;
-            string searchedNodesXPath = nodesXPath + "[contains(., '" + searchedText + "')]";
-
-            if (xlfDocument != null)
+            if (xmlDocument != null)
             {
-                if (xlfDocument.SelectNodes(nodesXPath).Count > 0)
-                {
-                    searchedNodes = xlfDocument.SelectNodes(searchedNodesXPath);
-                    return searchedNodes;
-                }
+                foundNodes = xmlDocument.GetElementsByTagName(tagName);
             }
 
-            return searchedNodes;
+            return foundNodes;
         }
 
-        static public XmlNodeList GetSourceNodesContaining(XmlDocument xlfDocument, string searchedText)
+        static public XmlNodeList GetTransUnitNodes(XmlDocument xmlDocument)
         {
-            string xpathExpression = "//source[contains(., '" + searchedText + "')]";
-            XmlNodeList sourceNodes = xlfDocument.SelectNodes(xpathExpression);
-
-            return sourceNodes;
+            return GetNodesByTagName(xmlDocument, "trans-unit");
         }
 
-        static public XmlNodeList GetTargetNodesContaining(XmlDocument xlfDocument, string searchedText)
+        static public XmlNodeList GetSourceNodes(XmlDocument xmlDocument)
         {
-            string xpathExpression = "//target[contains(., '" + searchedText + "')]";
-            XmlNodeList sourceNodes = xlfDocument.SelectNodes(xpathExpression);
-
-            return sourceNodes;
+            return GetNodesByTagName(xmlDocument, "source");
         }
 
-        static public XmlNodeList GetTransUnitNodesContaining(XmlDocument xlfDocument, string searchedText)
+        static public XmlNodeList GetTargetNodes(XmlDocument xmlDocument)
         {
-            string xpathExpression = "//source[contains(., '" + searchedText + "')]" + "/parent::trans-unit";
-            XmlNodeList sourceNodes = xlfDocument.SelectNodes(xpathExpression);
+            return GetNodesByTagName(xmlDocument, "target");
+        }
 
-            return sourceNodes;
+        /*
+         * 
+         */
+        static public XmlNodeList GetNodesContaining(XmlDocument xmlDocument, string tagName, string containedText)
+        {
+            XmlNodeList foundNodes = null;
+
+            string tagNameXPath = "//" + tagName;
+            string limitedTagNameXPath = tagNameXPath + "[contains(., '" + containedText + "')]";
+
+            if (xmlDocument != null)
+            {
+                foundNodes = xmlDocument.SelectNodes(limitedTagNameXPath);
+            }
+
+            return foundNodes;
+        }
+
+        static public XmlNodeList GetSourceNodesContaining(XmlDocument xmlDocument, string containedText)
+        {
+            return GetNodesContaining(xmlDocument, "source", containedText);
+        }
+
+        static public XmlNodeList GetTargetNodesContaining(XmlDocument xmlDocument, string containedText)
+        {
+            return GetNodesContaining(xmlDocument, "target", containedText);
+        }
+
+
+        /*
+         * 
+         */
+        static public XmlNodeList GetTransUnitNodesContainingInSource(XmlDocument xmlDocument, string containedText)
+        {
+            XmlNodeList foundNodes = null;
+
+            string limitedTagNameXPath = "//source" + "[contains(., '" + containedText + "')]/parent::trans-unit";
+
+            if (xmlDocument != null)
+            {
+                foundNodes = xmlDocument.SelectNodes(limitedTagNameXPath);
+            }
+
+            return foundNodes;
+        }
+
+        /*
+         * 
+         */
+        static public XmlNodeList GetTransUnitNodesContainingInTarget(XmlDocument xmlDocument, string containedText)
+        {
+            XmlNodeList foundNodes = null;
+
+            string limitedTagNameXPath = "//target" + "[contains(., '" + containedText + "')]/parent::trans-unit";
+
+            if (xmlDocument != null)
+            {
+                foundNodes = xmlDocument.SelectNodes(limitedTagNameXPath);
+            }
+
+            return foundNodes;
         }
 
     }
